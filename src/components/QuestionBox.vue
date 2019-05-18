@@ -9,62 +9,52 @@
 
             <b-list-group>
                 <b-list-group-item 
-                  v-for="(answer, index) in answers" 
-                  :key="index"
-                  :class="[selectedIndex === index ? 'selected' : '']" 
-                  @click="selectAnswer(index)">
+                    v-for="(answer, index) in answers" 
+                    :key="index" 
+                    :class="[selectedIndex === index ? 'selected' : '']" 
+                    @click="selectAnswer(index)"
+                >
                     {{answer}}
                 </b-list-group-item>
             </b-list-group>
 
-            <b-button @click="submit" variant="primary" href="#">Submit</b-button>
+            <b-button @click="submit" :disabled="selectedIndex === null" variant="primary" href="#">Submit</b-button>
             <b-button @click="next" variant="success" href="#">Next</b-button>
         </b-jumbotron>
     </div>
 </template>
 <script>
-  import _ from 'lodash';
-  export default {
-    props: {
-      currentQuestion: Object,
-      next: Function,
-      increment: Function
-    },
-    data() {
-        return {
-            selectedIndex: null,
-            shuffledAnswers: [],
-            correctIndex: null
+    import _ from 'lodash';
+    export default {
+        props: {
+            currentQuestion: Object,
+            next: Function,
+            increment: Function
+        },
+        data() {
+            return {
+                selectedIndex: null,
+                shuffledAnswers: [],
+                correctIndex: null
+            }
+        },
+        watch: {currentQuestion: {immediate: true, handler() {this.selectedIndex = null; this.shuffleAnswers();}}},
+        methods: {
+            selectAnswer: function(index) {this.selectedIndex = index;},
+            shuffleAnswers: function() {
+                this.shuffledAnswers = _.shuffle([...this.currentQuestion.incorrect_answers, this.currentQuestion.correct_answer]);
+                this.correctIndex = this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer);
+            },
+            submit: function() {this.increment((this.selectedIndex === this.correctIndex) ? true : false)}
+        },
+        computed: {
+            answers: function() {
+                let answers = [...this.currentQuestion.incorrect_answers]
+                answers.push(this.currentQuestion.correct_answer)
+                return answers;
+            } 
         }
-    },
-    watch: {
-      currentQuestion: {
-        immediate: true,
-        handler() {
-          this.selectedIndex = null;
-          this.shuffleAnswers();
-        }
-      }
-    },
-    methods: {
-      selectAnswer: function(index) {this.selectedIndex = index;},
-      shuffleAnswers: function() {
-        let answers = [...this.currentQuestion.incorrect_answers, this.currentQuestion.correct_answer];
-        this.shuffledAnswers = _.shuffle(answers);
-        this.correctIndex = this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer);
-      },
-      submit: function() {
-        this.increment((this.selectedIndex === this.correctIndex) ? true : false)
-      }
-    },
-    computed: {
-        answers: function() {
-          let answers = [...this.currentQuestion.incorrect_answers]
-          answers.push(this.currentQuestion.correct_answer)
-          return answers;
-        } 
     }
-}
 </script>
 <style>
     .list-group {margin-bottom: 15px;}
