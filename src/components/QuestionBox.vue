@@ -11,7 +11,7 @@
                 <b-list-group-item 
                     v-for="(answer, index) in answers" 
                     :key="index" 
-                    :class="[!answered && selectedIndex === index ? 'selected' : answered && index == correctIndex ? 'correct' : answered && index != correctIndex ? 'incorrect' : '']" 
+                    :class="[!answered && selectedIndex === index ? 'selected' : answered && index == correctIndex ? 'correct' : answered && selectedIndex == index && index != correctIndex ? 'incorrect' : '']" 
                     @click="selectAnswer(index)"
                 >
                     {{answer}}
