@@ -18,7 +18,7 @@
                 </b-list-group-item>
             </b-list-group>
 
-            <b-button @click="submit" :disabled="selectedIndex === null" variant="primary" href="#">Submit</b-button>
+            <b-button @click="submit" :disabled="selectedIndex === null || answered" variant="primary" href="#">Submit</b-button>
             <b-button @click="next" variant="success" href="#">Next</b-button>
         </b-jumbotron>
     </div>
@@ -35,17 +35,18 @@
             return {
                 selectedIndex: null,
                 shuffledAnswers: [],
-                correctIndex: null
+                correctIndex: null,
+                answered: false
             }
         },
-        watch: {currentQuestion: {immediate: true, handler() {this.selectedIndex = null; this.shuffleAnswers();}}},
+        watch: {currentQuestion: {immediate: true, handler() {this.selectedIndex = null; this.shuffleAnswers(); this.answered = false;}}},
         methods: {
             selectAnswer: function(index) {this.selectedIndex = index;},
             shuffleAnswers: function() {
                 this.shuffledAnswers = _.shuffle([...this.currentQuestion.incorrect_answers, this.currentQuestion.correct_answer]);
                 this.correctIndex = this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer);
             },
-            submit: function() {this.increment((this.selectedIndex === this.correctIndex) ? true : false)}
+            submit: function() {this.increment((this.selectedIndex === this.correctIndex) ? true : false); this.answered = true;}
         },
         computed: {
             answers: function() {
