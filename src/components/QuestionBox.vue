@@ -17,32 +17,51 @@
                 </b-list-group-item>
             </b-list-group>
 
-            <b-button variant="primary" href="#">Submit</b-button>
+            <b-button @click="submit" variant="primary" href="#">Submit</b-button>
             <b-button @click="next" variant="success" href="#">Next</b-button>
         </b-jumbotron>
     </div>
 </template>
 <script>
-export default {
+  import _ from 'lodash';
+  export default {
     props: {
-        currentQuestion: Object,
-        next: Function
+      currentQuestion: Object,
+      next: Function,
+      increment: Function
     },
     data() {
         return {
-            selectedIndex: null
+            selectedIndex: null,
+            shuffledAnswers: [],
+            correctIndex: null
         }
     },
-    methods: {
-        selectAnswer: function(index) {
-            this.selectedIndex = index;
+    watch: {
+      currentQuestion: {
+        immediate: true,
+        handler() {
+          this.selectedIndex = null;
+          this.shuffleAnswers();
         }
+      }
+    },
+    methods: {
+      selectAnswer: function(index) {this.selectedIndex = index;},
+      shuffleAnswers: function() {
+        let answers = [...this.currentQuestion.incorrect_answers, this.currentQuestion.correct_answer];
+        this.shuffledAnswers = _.shuffle(answers);
+        this.correctIndex = this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer);
+      },
+      submit: function() {
+        this.increment((this.selectedIndex === this.correctIndex) ? true : false)
+      }
     },
     computed: {
         answers: function() {
-            let answers = [...this.currentQuestion.incorrect_answers]
-            answers.push(this.currentQuestion.correct_answer)
-            return answers;
+          let answers = [...this.currentQuestion.incorrect_answers]
+          answers.push(this.currentQuestion.correct_answer)
+          return answers;
         } 
     }
 }
@@ -51,7 +70,7 @@ export default {
     .list-group {margin-bottom: 15px;}
     .list-group-item:hover {background-color: #EEE; cursor: pointer;}
     .btn {margin: 0 5px;}
-    .selected {background-color: blue;}
-    .correct {background-color: green;}
-    .incorrect {background-color: red;}
+    .selected {background-color: lightblue;}
+    .correct {background-color: lightgreen;}
+    .incorrect {background-color: lightcoral;}
 </style>
