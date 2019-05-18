@@ -4,7 +4,7 @@
 		<b-container class="bv-example-row">
 			<b-row>
 				<b-col sm="6" offset="3">
-					<QuestionBox :question = "questions[index]" />
+					<QuestionBox :currentQuestion = "questions[index]" :next = "next" v-if="questions.length" />
 				</b-col>
 			</b-row>
 		</b-container>
@@ -26,7 +26,10 @@ export default {
   	components: {
     	Header,
     	QuestionBox
-  	},
+    },
+    methods: {
+        next: function() {this.index++;}
+    },
   	mounted: function() {
 		fetch('https://opentdb.com/api.php?amount=10&category=31&type=multiple', {method: 'get'})
 		.then((response) => {return response.json()})
