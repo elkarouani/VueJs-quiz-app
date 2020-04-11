@@ -11,7 +11,7 @@
                 <b-list-group-item 
                     v-for="(answer, index) in answers" 
                     :key="index" 
-                    :class="[!answered && selectedIndex === index ? 'selected' : answered && index == correctIndex ? 'correct' : answered && selectedIndex == index && index != correctIndex ? 'incorrect' : '']" 
+                    :class="answerClass(index)" 
                     @click="selectAnswer(index)"
                 >
                     {{answer}}
@@ -46,6 +46,7 @@
                 this.shuffledAnswers = _.shuffle([...this.currentQuestion.incorrect_answers, this.currentQuestion.correct_answer]);
                 this.correctIndex = this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer);
             },
+            answerClass: function(index) {return !this.answered && this.selectedIndex === index ? 'selected' : this.answered && index == this.correctIndex ? 'correct' : this.answered && this.selectedIndex == index && index != this.correctIndex ? 'incorrect' : '';},
             submit: function() {this.increment((this.selectedIndex === this.correctIndex) ? true : false); this.answered = true;}
         },
         computed: {
